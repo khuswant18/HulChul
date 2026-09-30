@@ -1,0 +1,30 @@
+{
+  "name": "Aarav Sharma",
+  "email": "aarav.sharma@example.test",
+  "phone": "9876543210",
+  "city": "Jaipur",
+  "education": "B.Tech Computer Science, final year, Rajputana Institute of Technology (2027)",
+  "headline": "Final-year CS student who builds full-stack web apps",
+  "links": {
+    "github": "https://github.com/aarav-sharma-demo",
+    "linkedin": "https://www.linkedin.com/in/aarav-sharma-demo"
+  },
+  "skills": ["React", "TypeScript", "JavaScript", "Next.js", "Node.js", "Express", "MongoDB", "HTML", "CSS", "Tailwind CSS", "Git", "REST APIs"],
+  "skillLevels": { "React": 4, "TypeScript": 3, "Node.js": 3, "SQL": 2 },
+  "projects": [
+    {
+      "name": "CampusCart",
+      "summary": "a Next.js and MongoDB marketplace for second-hand textbooks at my college, used by about 600 students a month",
+      "skills": ["Next.js", "MongoDB", "TypeScript", "Tailwind CSS"]
+    },
+    {
+      "name": "Hisaab",
+      "summary": "a React and Node.js expense splitter for hostel roommates that works offline and syncs later",
+      "skills": ["React", "Node.js", "Express", "REST APIs"]
+    }
+  ],
+  "availability": { "hoursPerWeek": 35, "startDate": "2026-10-05", "noticePeriod": "Can start immediately" },
+  "preferences": { "expectedStipend": 20000, "willingToRelocate": null },
+  "resumePath": "workspace/resumes/aarav-sharma.pdf",
+  "trackerPath": "workspace/trackers/aarav-sharma.xlsx"
+}

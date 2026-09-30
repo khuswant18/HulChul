@@ -1,0 +1,29 @@
+{
+  "name": "Meera Iyer",
+  "email": "meera.iyer@example.test",
+  "phone": "9123456780",
+  "city": "Chennai",
+  "education": "B.Sc Statistics, third year, Madras Christian Arts College (2027)",
+  "headline": "Statistics student who likes turning messy data into dashboards",
+  "links": {
+    "github": "https://github.com/meera-iyer-demo"
+  },
+  "skills": ["SQL", "Python", "pandas", "Excel", "Power BI", "Tableau"],
+  "skillLevels": { "SQL": 4, "Python": 3, "Excel": 5 },
+  "projects": [
+    {
+      "name": "Chennai Metro ridership",
+      "summary": "a Power BI dashboard built on two years of public metro ridership data, cleaned with pandas",
+      "skills": ["Power BI", "Python", "pandas"]
+    },
+    {
+      "name": "College canteen sales",
+      "summary": "SQL analysis of 18 months of canteen billing data that helped cut food waste by planning daily stock",
+      "skills": ["SQL", "Excel"]
+    }
+  ],
+  "availability": { "hoursPerWeek": 30, "startDate": "2026-10-12", "noticePeriod": "One week" },
+  "preferences": { "expectedStipend": 15000, "willingToRelocate": true },
+  "resumePath": "workspace/resumes/meera-iyer.pdf",
+  "trackerPath": "workspace/trackers/meera-iyer.xlsx"
+}
