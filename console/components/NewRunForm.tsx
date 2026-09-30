@@ -72,11 +72,8 @@ export function NewRunForm() {
   return (
     <form className="composer" onSubmit={start}>
       <div>
-        <h1>New run</h1>
-        <p className="lead">
-          Say what you want in plain English. The operator searches the job board, applies in the browser, updates your
-          tracker and then checks its own work.
-        </p>
+        <h2 style={{ marginBottom: 6 }}>Start a run</h2>
+        <p className="hint">Plain English. It searches, applies, logs to your tracker, then checks its own work.</p>
       </div>
 
       <label className="field">
@@ -84,12 +81,14 @@ export function NewRunForm() {
         <textarea value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Apply to 3 remote frontend internships paying at least 15k" required />
       </label>
       <div className="examples">
-        <span className="hint">Or start from one of these:</span>
-        {examples.map((ex) => (
-          <button type="button" key={ex.goal} onClick={() => applyExample(ex)}>
-            {ex.goal}
-          </button>
-        ))}
+        <span className="hint">Try one of these</span>
+        <div className="chips">
+          {examples.map((ex) => (
+            <button type="button" key={ex.goal} title={ex.goal} onClick={() => applyExample(ex)}>
+              {ex.goal}
+            </button>
+          ))}
+        </div>
       </div>
 
       <label className="field">
@@ -150,10 +149,10 @@ export function NewRunForm() {
         </label>
       </fieldset>
 
-      {error && <p className="error-text">{error}</p>}
-      <div>
+      <div className="composer-foot">
+        {error ? <p className="error-text">{error}</p> : <p className="hint">You can pause or stop at any point.</p>}
         <button className="btn primary" disabled={starting || !goal.trim() || !profile}>
-          {starting ? "Starting…" : "Start run"}
+          {starting ? "Starting…" : "Start run"} <span className="arrow" aria-hidden="true">→</span>
         </button>
       </div>
     </form>

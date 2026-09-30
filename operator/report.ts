@@ -42,13 +42,14 @@ export function renderReport(s: RunState) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Run ${esc(s.id)} · Evidence report</title>
 <style>
-:root{--paper:#f2f2ef;--ink:#17181a;--muted:#6e7075;--rule:#deded9;--ok:#1d6b52;--bad:#b3261e;--warn:#8a5300}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.55 "IBM Plex Sans",-apple-system,"Segoe UI",sans-serif}
+:root{--paper:#f6f9fc;--ink:#0d253d;--muted:#64748d;--rule:#e3e8ee;--ok:#0a7a52;--bad:#c2124a;--warn:#8a5a1c;--primary:#533afd}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:300 14.5px/1.5 Inter,"SF Pro Display",system-ui,-apple-system,sans-serif;font-feature-settings:"ss01"}
+a{color:var(--primary);text-decoration:none}
 main{max-width:1040px;margin:0 auto;padding:40px 24px 80px}
-h1{font-size:24px;margin:0 0 6px;font-weight:600}h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:40px 0 10px;font-weight:600;border-bottom:1px solid var(--rule);padding-bottom:6px}
+h1{font-size:32px;margin:0 0 6px;font-weight:300;letter-spacing:-.64px}h2{font-size:20px;letter-spacing:-.2px;color:var(--ink);margin:40px 0 12px;font-weight:300;border-bottom:1px solid var(--rule);padding-bottom:8px}
 .goal{font-size:17px;margin:8px 0 18px;max-width:780px}
 .meta{display:flex;flex-wrap:wrap;gap:6px 28px;color:var(--muted);font-size:13px}.meta b{color:var(--ink);font-weight:500}
-.outcome{margin:22px 0 0;padding:14px 16px;border-left:3px solid var(--ink);background:#fff}
+.outcome{margin:22px 0 0;padding:16px 20px;border-radius:12px;border:1px solid var(--rule);border-top:4px solid var(--primary);background:#fff;box-shadow:0 1px 3px rgba(0,55,112,.08);font-weight:400}
 .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:12.5px}
 table{width:100%;border-collapse:collapse;background:#fff}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
 th{font-size:12px;font-weight:600;color:var(--muted)}

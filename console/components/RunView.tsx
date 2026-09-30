@@ -69,17 +69,16 @@ export function RunView({ id }: { id: string }) {
   const shownShot = shot ?? state.latestScreenshot;
 
   return (
-    <div>
+    <>
+      <div className="mesh short" aria-hidden="true" />
       <div className="run-head">
         <div>
           <Link href="/" className="back">
-            All runs
+            <span aria-hidden="true">←</span> All runs
           </Link>
           <h1>{state.goal}</h1>
           <div className="meta">
-            <span>
-              <b className={`status ${statusTone(state.status)}`}>{statusLabel[state.status]}</b>
-            </span>
+            <span className={`pill ${statusTone(state.status)}`}>{statusLabel[state.status]}</span>
             <span>
               As <b>{state.profileName}</b>
             </span>
@@ -87,7 +86,7 @@ export function RunView({ id }: { id: string }) {
               Applied <b className="mono">{submitted} / {state.target || "?"}</b>
             </span>
             <span>
-              Reasoning <b>{state.llm.mode === "groq" ? `Groq, ${state.llm.calls} calls` : "rules only"}</b>
+              Reasoning <b>{state.llm.mode === "groq" ? `Groq, ${state.llm.calls} ${state.llm.calls === 1 ? "call" : "calls"}` : "rules only"}</b>
             </span>
             <span>Started {whenOf(state.createdAt)}</span>
             {state.resumedCount > 0 && <span>Resumed {state.resumedCount}×</span>}
@@ -125,6 +124,7 @@ export function RunView({ id }: { id: string }) {
       </div>
       {actionError && <p className="error-text">{actionError}</p>}
 
+
       <ol className="phases" aria-label="Progress">
         {phases.map((p, i) => (
           <li key={p.key} className={state.phase === "done" || i < currentPhase ? "done" : i === currentPhase ? "current" : ""}>
@@ -134,7 +134,7 @@ export function RunView({ id }: { id: string }) {
       </ol>
 
       <div className="run-body">
-        <div>
+        <div className="stack">
           {pending && <ApprovalCard runId={id} approval={pending} />}
 
           {finished && state.outcome && (
@@ -152,26 +152,40 @@ export function RunView({ id }: { id: string }) {
           )}
 
           {state.verification && (
-            <section>
+            <section className="card">
               <h2>Verification</h2>
               <VerificationTable verification={state.verification} />
             </section>
           )}
 
-          <section>
+          <section className="card">
             <h2>Shortlist</h2>
             <PlanTable state={state} onShowScreenshot={setShot} />
           </section>
 
-          <section>
+          <section className="card">
             <h2>Timeline</h2>
             <Timeline steps={state.steps} onShowScreenshot={setShot} />
           </section>
         </div>
 
         <aside className="aside">
-          <div>
-            <h3>{shot ? "Screenshot" : live(state.status) ? "Browser, live" : "Last screen"}</h3>
+          <div className="screen-card">
+            <div className="screen-bar">
+              <span className="dots" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="title">{shownShot?.replace("shots/", "") ?? "browser"}</span>
+              {shot ? (
+                <button className="link-btn" onClick={() => setShot(null)}>
+                  Follow live
+                </button>
+              ) : (
+                live(state.status) && <span className="live-dot">Live</span>
+              )}
+            </div>
             <div className="screen">
               {shownShot ? (
                 <a href={fileUrl(id, shownShot)} target="_blank" rel="noreferrer">
@@ -181,18 +195,10 @@ export function RunView({ id }: { id: string }) {
                 <div className="placeholder">No screenshot yet</div>
               )}
             </div>
-            <div className="screen-caption">
-              <span className="mono">{shownShot?.replace("shots/", "")}</span>
-              {shot && (
-                <button className="link-btn small" onClick={() => setShot(null)}>
-                  Follow live
-                </button>
-              )}
-            </div>
           </div>
 
           {state.mission && (
-            <div>
+            <div className="card tight">
               <h3>How the goal was read</h3>
               <dl className="kv">
                 <dt>Roles</dt>
@@ -215,18 +221,24 @@ export function RunView({ id }: { id: string }) {
                 )}
               </dl>
               {state.mission.assumptions.map((a) => (
-                <p key={a} className="hint">
+                <p key={a} className="assumption">
                   {a}
                 </p>
               ))}
             </div>
           )}
 
-          <TrackerView profilePath={state.profilePath} refreshKey={Object.values(state.applications).filter((a) => a.loggedToTracker).length} />
+          <div className="card tight">
+            <TrackerView profilePath={state.profilePath} refreshKey={Object.values(state.applications).filter((a) => a.loggedToTracker).length} />
+          </div>
 
-          {live(state.status) && <SandboxPanel compact />}
+          {live(state.status) && (
+            <div className="card cream tight">
+              <SandboxPanel compact />
+            </div>
+          )}
         </aside>
       </div>
-    </div>
+    </>
   );
 }

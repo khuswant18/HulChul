@@ -33,14 +33,17 @@ export function PlanTable({ state, onShowScreenshot }: { state: RunState; onShow
             return (
               <tr key={p.boardId} className={app?.screenshot ? "clickable" : ""} onClick={() => app?.screenshot && onShowScreenshot(app.screenshot)}>
                 <td>
-                  {p.company} <span className="muted">· {p.title}</span>
+                  <span className="job-title">{p.company}</span> <span className="muted">· {p.title}</span>
                   <div className="why">{p.reasons.join(", ")}</div>
                   {app?.reason && <div className="why">{app.reason}</div>}
                 </td>
-                <td className="fit">{p.fit}%</td>
+                <td className="fit">
+                  {p.fit}%
+                  <span className="fit-bar" style={{ ["--fit" as string]: `${p.fit}%` }} />
+                </td>
                 <td>
-                  <span className={`status ${status.tone}`}>{status.label}</span>
-                  {app?.applicationId && <div className="mono small">{app.applicationId}</div>}
+                  <span className={`pill ${status.tone}`}>{status.label}</span>
+                  {app?.applicationId && <div className="mono small" style={{ marginTop: 6 }}>{app.applicationId}</div>}
                   {app?.recovered && <div className="small muted">recovered</div>}
                 </td>
               </tr>

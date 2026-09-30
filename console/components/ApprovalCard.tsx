@@ -36,7 +36,9 @@ export function ApprovalCard({ runId, approval }: { runId: string; approval: App
 
   return (
     <div className="approval" role="alertdialog" aria-labelledby={`approval-${approval.id}`}>
-      <div className="small muted">{kindLabel[approval.kind]}. The operator is waiting for you.</div>
+      <div className="kind">
+        <span className="pill warn">{kindLabel[approval.kind]}</span> <span className="small muted">The operator is waiting for you.</span>
+      </div>
       <h2 id={`approval-${approval.id}`}>{approval.title}</h2>
       <pre>{approval.detail}</pre>
       {approval.allowText && (

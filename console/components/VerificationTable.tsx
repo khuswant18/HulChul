@@ -34,8 +34,10 @@ export function VerificationTable({ verification }: { verification: Verification
         {verification.jobs.map((j) => (
           <tr key={j.boardId}>
             <td>
-              {j.company} <span className="mono small muted">{j.applicationId}</span>
-              <div className={`status ${j.verdict === "verified" ? "ok" : j.verdict === "partly verified" ? "warn" : "bad"}`}>{j.verdict}</div>
+              <span className="job-title">{j.company}</span> <span className="mono small muted">{j.applicationId}</span>
+              <div style={{ marginTop: 6 }}>
+                <span className={`pill ${j.verdict === "verified" ? "ok" : j.verdict === "partly verified" ? "warn" : "bad"}`}>{j.verdict}</span>
+              </div>
               {j.notes.length > 0 && <div className="why">{j.notes.join("; ")}</div>}
             </td>
             <td><Check result={j.board} /></td>

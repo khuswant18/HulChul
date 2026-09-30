@@ -21,7 +21,7 @@ export function TrackerView({ profilePath, refreshKey }: { profilePath: string; 
       {!data && !error && <div className="skeleton w80" />}
       {data && (
         <>
-          <p className="hint mono">{data.path}</p>
+          <span className="path mono">{data.path}</span>
           {data.rows.length === 0 ? (
             <p className="hint">Empty. Rows appear here as applications go through.</p>
           ) : (

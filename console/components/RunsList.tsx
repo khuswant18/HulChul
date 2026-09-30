@@ -26,7 +26,7 @@ export function RunsList() {
 
   return (
     <section>
-      <h2>Runs</h2>
+      <h2>Recent runs</h2>
       {error && <p className="error-text">{error}</p>}
       {!runs && !error && (
         <>
@@ -35,7 +35,7 @@ export function RunsList() {
           <div className="skeleton w80" />
         </>
       )}
-      {runs && runs.length === 0 && <p className="empty">No runs yet. Write a goal on the left and start one.</p>}
+      {runs && runs.length === 0 && <p className="empty">No runs yet. Write a goal and start one.</p>}
       {runs && runs.length > 0 && (
         <table className="data">
           <thead>
@@ -56,7 +56,7 @@ export function RunsList() {
                 </td>
                 <td className="mono">{r.target ? `${r.submitted} / ${r.target}` : "-"}</td>
                 <td>
-                  <span className={`status ${statusTone(r.status)}`}>{statusLabel[r.status]}</span>
+                  <span className={`pill ${statusTone(r.status)}`}>{statusLabel[r.status]}</span>
                 </td>
               </tr>
             ))}

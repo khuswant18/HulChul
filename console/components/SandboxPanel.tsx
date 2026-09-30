@@ -91,7 +91,7 @@ export function SandboxPanel({ compact = false }: { compact?: boolean }) {
       ) : (
         !message && <div className="skeleton w60" />
       )}
-      <div className="row">
+      <div className="actions">
         <button className="btn small" type="button" disabled={busy || !faults} onClick={() => patch({ expireSessionAfter: 2 }, "Current Kaamkaaj sessions will expire after 2 more requests.")}>
           Expire session soon
         </button>
