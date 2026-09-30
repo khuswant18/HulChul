@@ -1,151 +1,206 @@
 # Career Operator
 
-A small computer operator for job seekers. You give it a goal in plain English, for example:
+Tell it a job-hunting goal in plain English, for example:
 
 > Apply to up to 3 remote frontend or full-stack internships posted in the last week that pay at least ₹15,000 a month.
 
-It then:
+It opens a real browser, finds matching jobs on a job board, fills and submits the applications, adds each one to an Excel tracker, and then checks that everything really went through. It asks you first before paying a fee, accepting a contract, or answering something it doesn't know.
 
-1. reads the goal and the candidate's profile file,
-2. logs in to a job board in a real Chromium window, searches, and reads every posting,
-3. shortlists jobs with a written reason for every job it keeps or drops,
-4. fills and submits the application forms (including one on a company's own careers site),
-5. writes each application into the candidate's tracker spreadsheet (`.xlsx`),
-6. checks its own work: the job board, the candidate's inbox and the spreadsheet must all agree,
-7. writes an evidence report with screenshots.
+Everything runs on your own computer against small practice websites that come with the project. All people, companies and jobs are made up.
 
-It asks you before doing anything outside the limits you gave it (paying a fee, accepting a bond, sending more applications than allowed, answering something your profile doesn't cover). You can pause or stop it at any point. If it crashes mid-submit, it can resume without applying twice.
+---
 
-I picked this workflow because it is the core of what HulChul does for its users: find matching jobs, apply, and follow up. It needs a browser, files and a second app (email), and it has real ways to go wrong.
+## Quick start
 
-Everything runs locally against a sandbox I control. All companies, people and jobs are synthetic.
+You need **Node.js 20 or newer** ([download](https://nodejs.org)). Check with `node -v`.
 
-## Requirements
-
-- Node.js 20 or newer (built and tested on Node 24)
-- About 300 MB for Chromium (installed by Playwright)
-- Optional: a Groq API key (free at https://console.groq.com/keys). Without one, the operator runs in rules-only mode and every feature still works. With one, a Groq-hosted model (`openai/gpt-oss-120b` by default) reads the goal, writes the free-text answers and maps unfamiliar form fields. See the engineering note for exactly where.
-
-## Setup
+Run these commands one by one in a terminal:
 
 ```bash
+git clone https://github.com/khuswant18/HulChul.git
+cd HulChul
 npm install
 npx playwright install chromium
-cp .env.example .env          # add GROQ_API_KEY here if you have one
-npm run setup                 # creates resumes (PDF), trackers (xlsx) and resets the sandbox
-npm run dev                   # starts everything below
+cp .env.example .env
+npm run setup
+npm run dev
 ```
 
-Open **http://localhost:3000**.
+On Windows (Command Prompt), use `copy .env.example .env` instead of `cp`.
 
-| What | URL | Notes |
+When the terminal shows `Ready`, open **http://localhost:3000** in your browser. That's it.
+
+- `npm run setup` prepares the demo data. Run it again any time you want a fresh start.
+- `npm run dev` starts everything. Keep this terminal open. Press `Ctrl+C` to stop.
+- The first page load can take a few seconds while Next.js compiles.
+
+### Optional: AI with Groq
+
+It works fully without any API key, using built-in rules. For smarter goal reading and better-written cover notes, add a free Groq key:
+
+1. Get a key at https://console.groq.com/keys
+2. Open the `.env` file and paste it after `GROQ_API_KEY=`
+3. Stop `npm run dev` (`Ctrl+C`) and start it again
+
+The top-right corner of the console shows **Reasoning: Groq** when the key is being used.
+
+---
+
+## What starts on your computer
+
+| Open this | What it is |
+| --- | --- |
+| http://localhost:3000 | **Operator console.** Start runs, watch progress, approve, pause, stop. |
+| http://localhost:4010 | **Kaamkaaj**, a practice job board. The operator applies to jobs here. |
+| http://localhost:4020 | **Postbox**, a practice email inbox. Confirmation emails arrive here. |
+| http://localhost:4030 | **Zentrail**, a company's own careers site with a different form. |
+
+Kaamkaaj and Postbox show demo accounts on their login pages with a **Use this account** button, so you don't need to remember anything:
+
+| Name | Email | Password |
 | --- | --- | --- |
-| Operator console (Next.js) | http://localhost:3000 | Start runs, watch progress, approve, pause, stop |
-| Operator API | http://localhost:4100 | REST + server-sent events, serves screenshots and reports |
-| Kaamkaaj job board | http://localhost:4010 | The main app the operator drives. Log in with `aarav.sharma@example.test` / `demo-pass-2026` |
-| Postbox webmail | http://localhost:4020 | The candidate's inbox, where confirmation emails arrive |
-| Zentrail careers | http://localhost:4030 | An employer's own careers site with a different form layout |
+| Aarav Sharma | `aarav.sharma@example.test` | `demo-pass-2026` |
+| Meera Iyer | `meera.iyer@example.test` | `demo-pass-2026` |
 
-The browser opens in a visible window by default so you can watch it work. Set `HEADLESS=true` in `.env` to hide it, and `SLOW_MO_MS` to slow it down or speed it up.
+---
 
-## Walkthrough (what the demo video shows)
+## Try it in 2 minutes
 
-Run `npm run setup` before each scenario to start from a clean state. The console also has a **Reset demo data** button.
+1. Open http://localhost:3000.
+2. Under **Try one of these**, click the first goal. **Applying as** is set to Aarav Sharma.
+3. Click **Start run**.
+4. A Chromium window opens and you can watch it work. The console shows every step.
+5. When the shortlist appears, click **Approve plan**.
+6. When it asks about a bond or a fee, choose **Skip this job** or **I agree**.
+7. At the end, look at the **Verification** table and click **Open report**.
 
-### 1. The main task
+The new applications are also in `workspace/trackers/aarav-sharma.xlsx`, on Kaamkaaj under *My applications*, and as emails in Postbox.
 
-Profile: Aarav Sharma. Click the first example goal and start the run.
+---
 
-- The shortlist appears for approval. Nimbus Health is left out because Aarav already applied there (it is in his tracker and on the board).
-- Tiffinbox is applied to on Kaamkaaj (a two-step form).
-- Zentrail's form is on its own careers site and asks Aarav to accept a 12-month bond. That is outside his authority, so the operator stops and asks. The bond field is outlined in the screenshot.
-- If you skip it, the operator applies to Dhobi Express and then brings in the backup, Ledgerly. Ledgerly's form asks for a ₹499 assessment fee, so it asks again.
-- At the end, verification checks each application on the board, in Postbox and in the tracker. The goal is marked met, or not met with a list of what is missing.
+## Demo scenarios
 
-Open `workspace/trackers/aarav-sharma.xlsx` to see the new rows, or click **Open report**.
+Run `npm run setup` (or click **Reset demo data** in the console) before each one.
 
-### 2. A variation, with no code change
+### 1. Main task
 
-Pick **Meera Iyer** and the second example goal (data analyst, remote or Pune, 12k+, best two). The operator runs a different search, meets different forms (including "Rate your SQL skill", answered from her profile) and writes to her own tracker.
+Aarav, first example goal.
 
-Two other goals show other kinds of variation:
+- It skips Nimbus Health because Aarav already applied there. That job is already in his tracker.
+- It applies to Tiffinbox on Kaamkaaj through a two-step form.
+- Zentrail's form asks him to accept a 12-month bond. That's outside what you allowed, so it stops and asks you.
+- Ledgerly's form asks for a ₹499 fee, so it asks again.
+- Finally it checks every application against the job board, the inbox and the Excel file.
 
-- *Apply to 5 React internships anywhere, skip Chaiwala Labs.* The goal asks for 5 but the limit is 3, so the operator asks whether to raise it.
-- *Apply to the React Native internship in Bengaluru.* The form asks about relocating, which Aarav's profile leaves open, so the operator asks you instead of guessing.
+### 2. Different goal, no code change
 
-### 3. Failures and recovery
+Pick **Meera Iyer** and the second example goal (data analyst, remote or Pune, 12k+). It runs a different search, meets different forms, and writes to Meera's own tracker.
 
-Use the **Sandbox faults** panel on the home page or on a running run.
+Two more:
 
-| Fault | What happens | What the operator does |
+- *Apply to 5 React internships anywhere, skip Chaiwala Labs.* It asks whether to go above your limit of 3.
+- *Apply to the React Native internship in Bengaluru.* It asks whether Aarav will relocate, because his profile doesn't say.
+
+### 3. Break things on purpose
+
+Use the **Sandbox faults** panel on the console home page, then start a run.
+
+| Switch | What goes wrong | What the operator does |
 | --- | --- | --- |
-| Next submit returns 502 | The site saves the application, but the browser gets an error page | Does not resubmit. Checks *My applications* (or the inbox for external sites), finds the application and records it. No duplicate. |
-| Next submit hangs for 30s | Saved, but no response | Gives up waiting after 12s, then does the same check as above |
-| Postbox is down + 502 on Zentrail | No way to prove the external application went through | Stops with a concrete blocker instead of risking a duplicate. The job stays "submitting", so **Resume run** checks again later. |
-| Expire session soon | The board logs the operator out mid-application | Logs back in. If the lost request was the final submit, it confirms nothing was saved before trying once more. |
-| Close the Dhobi Express posting | A planned job stops accepting applications | Marks it blocked with the reason and uses the next job on the shortlist |
-| Kill the operator (Ctrl+C twice, or kill the API process) | Crash at any point, including between the click and the response | The run shows as *Interrupted*. **Resume run** carries on from the journal and checks any half-finished submit first. |
+| Next submit returns 502 | The site saves the application but shows an error | Checks *My applications* (or the inbox), finds it, and does **not** apply twice |
+| Next submit hangs for 30s | No answer from the site | Stops waiting after 12s, then checks the same way |
+| Postbox is down | Can't read confirmation emails | If it can't prove an application went through, it stops and explains instead of guessing |
+| Expire session soon | Logged out mid-application | Logs back in and continues |
+| Close the Dhobi Express posting | A planned job closes | Marks it blocked and uses the next job on the list |
 
-### 4. Human control
+**Crash test:** while a run is going, press `Ctrl+C` in the terminal, then run `npm run dev` again. Open the run. It shows **Interrupted**. Click **Resume run** and it continues where it stopped, without duplicates.
 
-- **Pause** takes effect before the next browser action, not at the end of the job. **Continue** picks up exactly there.
-- **Stop** submits nothing more, then still verifies and reports what was done.
-- The limits on the home page are the operator's authority. Anything beyond them becomes a question: fees, contract terms, more applications than allowed, missing information. **Ask before every submit** shows the filled answers before each application.
+### 4. You stay in control
 
-## Command line
+- **Pause / Continue**: it stops before its next click.
+- **Stop**: it submits nothing more, then still checks and reports what was done.
+- The checkboxes under **What the operator may do without asking** are its limits. Anything beyond them becomes a question for you.
 
-The same operator runs without the console:
+---
+
+## Settings (`.env`)
+
+You normally only touch the first line.
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `GROQ_API_KEY` | empty | Your Groq key. Empty means rules-only mode. |
+| `OPERATOR_MODEL` | `openai/gpt-oss-120b` | Groq model. `openai/gpt-oss-20b` also works. |
+| `HEADLESS` | `false` | `true` hides the browser window. |
+| `SLOW_MO_MS` | `120` | Delay between browser actions. Use `300` to make it easier to follow. |
+| `SANDBOX_PASSWORD` | `demo-pass-2026` | Password of the demo accounts. |
+
+---
+
+## Run from the terminal (optional)
+
+The console is the easiest way. The same operator also works from the terminal:
 
 ```bash
-npm run sandbox                     # in one terminal
-npm run operator -- "Apply to 2 remote frontend internships paying 20k+" --profile workspace/profiles/aarav-sharma.json
-npm run operator -- --list
-npm run operator -- --resume <run-id>
+npm run sandbox
 ```
 
-While it runs, type `p` to pause, `r` to resume and `s` to stop. Ctrl+C once stops cleanly; twice quits immediately (use this to test resume). Options: `--max 3`, `--allow-fees`, `--allow-commitments`, `--no-confirm-plan`, `--confirm-submits`, `--headless`, and `--auto` (answers every question with the cautious choice, for unattended runs).
+Then, in a second terminal:
 
-## Output
+```bash
+npm run operator -- "Apply to 2 remote frontend internships paying 20k+"
+```
 
-Each run gets a folder in `runs/<id>/`:
+- Type `p` to pause, `r` to resume, `s` to stop.
+- Use `--profile workspace/profiles/meera-iyer.json` for Meera.
+- `npm run operator -- --list` shows past runs.
+- `npm run operator -- --resume <run-id>` continues one.
 
-- `state.json`: the journal the operator resumes from
-- `steps.jsonl`: every step, append-only
-- `shots/`: numbered screenshots
-- `report.html`: the evidence report (goal, verification table, what is not done, screenshots, every answer sent and where it came from, your decisions, timeline)
+---
+
+## Where the results go
+
+Each run gets a folder `runs/<run-id>/`:
+
+- `report.html`: the evidence report. Open it in a browser.
+- `shots/`: screenshots of every step.
+- `state.json`: saved progress, used to resume after a crash.
+
+The Excel trackers are in `workspace/trackers/`.
+
+---
 
 ## Tests
 
 ```bash
-npm test           # goal parsing, safety rules, shortlist filters, tracker idempotency, pause/stop/approvals
+npm test
 npm run typecheck
 ```
+
+---
 
 ## Project layout
 
 ```
-operator/          the operator itself (TypeScript, Node)
-  runner.ts        one run: understand → search → shortlist → apply → verify → report
-  apply.ts         one application, including the reconcile-before-retry logic
-  answers.ts       what goes in each form field, with the safety rules first
-  forms.ts         reads any HTML form by its labels and fills it
-  goal.ts          plain English → mission (Groq model, with a rules fallback)
-  matching.ts      deterministic shortlist with reasons
-  verify.ts        independent check against board, inbox and tracker
-  llm.ts           the only file that talks to Groq
-  journal.ts       run state on disk, used for resume
-  control.ts       pause, stop and approvals
-  sites/           Kaamkaaj and Postbox navigation
-  server.ts        HTTP API for the console
-  cli.ts           terminal front end
-console/           Next.js operator console
-sandbox/           the test environment: job board, careers site, webmail, fault switches
-workspace/         the candidate's files: profiles, resumes, tracker spreadsheets
-tests/             unit tests (node:test)
+console/     the web console (Next.js + React)
+operator/    the operator: browser control, form filling, safety rules, verification
+sandbox/     the practice websites: Kaamkaaj, Zentrail, Postbox
+workspace/   the candidates' files: profiles, resumes, Excel trackers
+scripts/     demo data setup
+tests/       unit tests
 ```
+
+How it works and why it's built this way: see [ENGINEERING_NOTE.md](ENGINEERING_NOTE.md).
+
+---
 
 ## Troubleshooting
 
-- **"Operator API offline" in the console**: `npm run dev` isn't running, or port 4100 is taken.
-- **Browser doesn't open**: run `npx playwright install chromium`.
-- **A run behaves oddly after many demos**: `npm run setup` resets the sandbox, resumes and trackers. Add `-- --runs` to delete old run folders too.
+| Problem | Fix |
+| --- | --- |
+| Console says **Operator API offline** | `npm run dev` isn't running. Start it and refresh the page. |
+| `Executable doesn't exist` or no browser opens | Run `npx playwright install chromium` |
+| `Port 3000 (or 4010, 4020, 4030, 4100) is in use` | Close the other program using it, or stop an old `npm run dev` |
+| A run fails with `ERR_CONNECTION_REFUSED` | The practice sites aren't running. Start everything with `npm run dev`, not only the console. |
+| Red "hydration" warning in the browser | Caused by a browser extension. Use an Incognito window. |
+| Things look strange after many runs | `npm run setup -- --runs` resets everything and deletes old runs |
