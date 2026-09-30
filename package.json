@@ -1,0 +1,45 @@
+{
+  "name": "hulchul-career-operator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A computer operator that takes a plain-English job-hunting goal, applies to matching jobs through a browser, keeps the tracker spreadsheet up to date and proves what it did.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "tsx scripts/setup.ts",
+    "sandbox": "tsx sandbox/start.ts",
+    "operator:server": "tsx operator/server.ts",
+    "console": "next dev console --port 3000",
+    "dev": "concurrently -n sandbox,operator,console -c yellow,cyan,magenta \"npm:sandbox\" \"npm:operator:server\" \"npm:console\"",
+    "operator": "tsx operator/cli.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p console/tsconfig.json"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "groq-sdk": "^1.6.0",
+    "multer": "^2.0.2",
+    "next": "^16.3.7",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.63.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "concurrently": "^9.2.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

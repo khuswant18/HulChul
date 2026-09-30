@@ -1,0 +1,10 @@
+node_modules
+.env
+.sandbox-data
+runs
+console/.next
+console/next-env.d.ts
+workspace/tracker.xlsx
+workspace/resumes/*.pdf
+*.tsbuildinfo
+.DS_Store
