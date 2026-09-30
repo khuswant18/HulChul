@@ -1,6 +1,6 @@
 import type { Application, Draft, Job } from "../store.ts";
-import type { Question } from "../seed.ts";
-import { daysAgoText, esc, shortDate, stipendText } from "../html.ts";
+import { daysAgoText, demoAccounts, esc, shortDate, stipendText } from "../html.ts";
+import { users, type Question } from "../seed.ts";
 
 const css = `
 *{box-sizing:border-box}
@@ -48,7 +48,7 @@ ul.skills li{background:#eef1f4;border:1px solid #d8dee4;padding:2px 10px;border
 .steps{color:#52606d;font-size:13px;margin-bottom:12px}
 .field{margin:0 0 16px}
 .field>label,.field legend{display:block;font-weight:600;margin-bottom:5px}
-.field input[type=text],.field input[type=email],.field input[type=tel],.field input[type=url],.field input[type=number],.field input[type=date],.field select{width:100%;max-width:420px}
+.field input[type=text],.field input[type=email],.field input[type=password],.field input[type=tel],.field input[type=url],.field input[type=number],.field input[type=date],.field select{width:100%;max-width:420px}
 fieldset.field{border:0;padding:0}
 fieldset.field label{font-weight:400;margin-right:18px}
 .check label{font-weight:400}
@@ -82,7 +82,7 @@ export function page(title: string, body: string, user?: { name: string } | null
 </body></html>`;
 }
 
-export function loginPage(error?: string, next = "/jobs", notice?: string) {
+export function loginPage(password: string, error?: string, next = "/jobs", notice?: string) {
   return page(
     "Log in",
     `<div class="login panel">
@@ -90,6 +90,7 @@ export function loginPage(error?: string, next = "/jobs", notice?: string) {
       <p style="color:#52606d;margin-top:0">Apply to internships and track your applications.</p>
       ${notice ? `<p class="notice info" role="status">${esc(notice)}</p>` : ""}
       ${error ? `<p class="errors" role="alert">${esc(error)}</p>` : ""}
+      ${demoAccounts(users, password, "#0b6bcb")}
       <form method="post" action="/login">
         <input type="hidden" name="next" value="${esc(next)}">
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required></div>

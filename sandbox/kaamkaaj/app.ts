@@ -63,14 +63,14 @@ export function createKaamkaajApp(options: { password: string; zentrailUrl: stri
 
   app.get("/login", (req, res) => {
     const notice = req.query.expired ? "Your session has expired. Please log in again." : undefined;
-    res.send(views.loginPage(undefined, String(req.query.next ?? "/jobs"), notice));
+    res.send(views.loginPage(options.password, undefined, String(req.query.next ?? "/jobs"), notice));
   });
 
   app.post("/login", (req, res) => {
     const { email = "", password = "", next = "/jobs" } = req.body as Record<string, string>;
     const user = findUser(email);
     if (!user || password !== options.password) {
-      return res.status(401).send(views.loginPage("Email or password is incorrect.", next));
+      return res.status(401).send(views.loginPage(options.password, "Email or password is incorrect.", next));
     }
     const token = crypto.randomBytes(16).toString("hex");
     db().sessions[token] = { email: user.email, requestsLeft: null };

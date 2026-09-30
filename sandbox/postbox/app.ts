@@ -2,7 +2,8 @@ import crypto from "node:crypto";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { db, findUser, save } from "../store.ts";
-import { esc } from "../html.ts";
+import { demoAccounts, esc } from "../html.ts";
+import { users } from "../seed.ts";
 
 const css = `
 body{margin:0;font:14px/1.45 -apple-system,"Helvetica Neue",Arial,sans-serif;color:#222;background:#fafafa}
@@ -47,6 +48,7 @@ export function createPostboxApp(options: { password: string }) {
         "Sign in",
         `<form class="login" method="post" action="/login">
           <h2 style="margin-top:0">Sign in</h2>
+          ${demoAccounts(users, options.password, "#c2410c")}
           <label for="email">Email</label><input id="email" name="email" type="email" required>
           <label for="password">Password</label><input id="password" name="password" type="password" required>
           <button type="submit">Sign in</button>

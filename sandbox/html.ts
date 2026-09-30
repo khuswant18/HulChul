@@ -7,6 +7,37 @@ export function esc(value: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
+export function demoAccounts(users: { email: string; name: string }[], password: string, accent: string) {
+  const rows = users
+    .map(
+      (u) => `<li>
+        <span><strong>${esc(u.name)}</strong><br><code>${esc(u.email)}</code></span>
+        <button type="button" data-email="${esc(u.email)}">Use this account</button>
+      </li>`,
+    )
+    .join("");
+  return `<aside class="demo-accounts" aria-label="Demo accounts">
+    <p><strong>Demo accounts</strong> Password for both: <code>${esc(password)}</code></p>
+    <ul>${rows}</ul>
+    <style>
+      .demo-accounts{margin:0 0 18px;padding:12px 14px;border:1px dashed ${accent};border-radius:6px;background:#fbfbfd;font-size:13px}
+      .demo-accounts p{margin:0 0 8px}
+      .demo-accounts ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+      .demo-accounts li{display:flex;align-items:center;justify-content:space-between;gap:10px}
+      .demo-accounts code{font:12px ui-monospace,Menlo,monospace;color:#444;white-space:nowrap}
+      .demo-accounts button{font:inherit;font-size:12px;padding:4px 10px;border:1px solid ${accent};background:#fff;color:${accent};border-radius:4px;cursor:pointer}
+    </style>
+    <script>
+      document.querySelectorAll(".demo-accounts button").forEach(function (b) {
+        b.addEventListener("click", function () {
+          document.getElementById("email").value = b.dataset.email;
+          document.getElementById("password").value = ${JSON.stringify(password)};
+        });
+      });
+    </script>
+  </aside>`;
+}
+
 export const rupees = (n: number) => "₹" + n.toLocaleString("en-IN");
 
 export function stipendText(min: number, max: number) {
