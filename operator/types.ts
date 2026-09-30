@@ -1,5 +1,3 @@
-// Shapes shared by the operator, its HTTP server and the console.
-
 export interface Mission {
   summary: string;
   keywords: string[];
@@ -11,8 +9,6 @@ export interface Mission {
   assumptions: string[];
 }
 
-// What the user allowed the operator to do on their behalf. Anything outside
-// this becomes an approval request instead of an action.
 export interface Authority {
   maxApplications: number;
   allowFees: boolean;

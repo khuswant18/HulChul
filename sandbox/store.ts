@@ -35,19 +35,17 @@ export interface Mail {
   read: boolean;
 }
 
-// Faults the demo presenter can switch on to see how the operator copes.
 export interface Faults {
-  // The next final submit is saved, but the browser gets a 502 page.
   submitGlitch: boolean;
-  // The next final submit is saved, but the response takes 30 seconds.
+
   submitHang: boolean;
-  // Every session expires after this many more page loads (0 = off).
+
   expireSessionAfter: number;
-  // Job ids that stop accepting applications.
+
   closedJobs: number[];
-  // Postbox answers every request with 503.
+
   mailOutage: boolean;
-  // Extra latency on every page, in ms.
+
   slowMs: number;
 }
 
@@ -123,8 +121,6 @@ export const uploadsDir = () => {
 
 export const db = () => state;
 
-// Job dates are computed from the day the sandbox was seeded, so a posting
-// that was "2 days ago" at seed time stays consistent for the whole demo.
 export function listJobs() {
   const seeded = new Date(state.seededAt).getTime();
   return seedJobs.map((job) => ({

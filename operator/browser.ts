@@ -13,8 +13,6 @@ export function browserOptionsFromEnv(): BrowserOptions {
   };
 }
 
-// One Chromium window per run. Screenshots are named by a running counter so
-// the evidence folder reads in order.
 export class OperatorBrowser {
   private browser: Browser | null = null;
   private counter = 0;
@@ -33,8 +31,7 @@ export class OperatorBrowser {
     if (!this.browser) throw new Error("Browser not launched");
     const context = await this.browser.newContext({ viewport: { width: 1280, height: 860 }, locale: "en-IN" });
     context.setDefaultTimeout(15_000);
-    // tsx keeps function names by wrapping them in __name(), and that helper
-    // doesn't exist inside the page when a function is sent to page.evaluate.
+
     await context.addInitScript({ content: "globalThis.__name = (fn) => fn;" });
     const page = await context.newPage();
     return { context, page };
@@ -48,7 +45,6 @@ export class OperatorBrowser {
     return `shots/${file}`;
   }
 
-  // Continue numbering after a resume instead of overwriting old evidence.
   startCounterAt(n: number) {
     this.counter = n;
   }

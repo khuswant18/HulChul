@@ -4,12 +4,6 @@ import { hasSkill, type Profile } from "./profile.ts";
 import type { Authority, JobListing } from "./types.ts";
 import { writeAnswer } from "./writer.ts";
 
-// Decides what goes into each form field.
-//
-// Order matters: the safety rules run first and cannot be overridden by the
-// profile mapping or by the model. A checkbox that commits the candidate to
-// paying money or signing a bond is never ticked without a human saying so.
-
 export interface FormField {
   name: string;
   kind: "text" | "email" | "tel" | "url" | "number" | "date" | "textarea" | "select" | "radio" | "checkbox" | "file";
@@ -33,8 +27,6 @@ export function safetyCheck(field: FormField, authority: Authority): FieldPlan |
   }
   if (!agreeKinds.has(field.kind)) return null;
 
-  // A contract term that mentions money (an exit penalty, say) is still a
-  // contract term, so it is classified once and not also treated as a fee.
   if (/\bbond\b|service agreement|exit clause|lock-?in|non-?compete|penalty/.test(label)) {
     if (authority.allowCommitments) return { field, action: "fill", value: "yes", source: "accepted: you allowed contract terms" };
     return { field, action: "ask", kind: "commitment", reason: "Agreeing would bind you to a contract term. You have not allowed the operator to accept commitments." };
@@ -109,9 +101,6 @@ const MappedSchema = z.object({
   ),
 });
 
-// For fields the rules don't recognise, the model may propose a value, but
-// only if it can quote the profile text it came from. Anything it can't back
-// up goes to the human instead.
 async function askModelForUnknownFields(fields: FormField[], profile: Profile, llm: Llm) {
   if (!fields.length || !llm.enabled) return new Map<string, { value: string; evidence: string }>();
   const profileText = JSON.stringify(profile);

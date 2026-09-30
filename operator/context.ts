@@ -20,7 +20,6 @@ export function sandboxUrlsFromEnv(): SandboxUrls {
   };
 }
 
-// Everything one run needs, passed around instead of globals.
 export interface RunContext {
   journal: Journal;
   control: RunControl;
@@ -32,7 +31,6 @@ export interface RunContext {
   llm: Llm;
   urls: SandboxUrls;
   credentials: { email: string; password: string };
-  // Answers the user gave earlier in this run, keyed by question text.
   remembered: Map<string, string>;
   readonly state: RunState;
   log(level: StepLevel, message: string, screenshotLabel?: string, page?: Page): Promise<string | null>;

@@ -12,8 +12,6 @@ const kindLabel: Record<Approval["kind"], string> = {
   submit: "Ready to submit",
 };
 
-// The safe choice is never styled as the primary button for money or
-// contract questions; there the user has to pick deliberately.
 const primaryChoices = new Set(["approve", "submit", "text", "keep"]);
 
 export function ApprovalCard({ runId, approval }: { runId: string; approval: Approval }) {

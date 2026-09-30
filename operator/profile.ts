@@ -2,8 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 
-// The candidate's own file. The operator only shares what is in here, and
-// asks when a form wants something that isn't.
 export const ProfileSchema = z.object({
   name: z.string(),
   email: z.string(),
@@ -13,13 +11,13 @@ export const ProfileSchema = z.object({
   headline: z.string(),
   links: z.object({ github: z.string().optional(), portfolio: z.string().optional(), linkedin: z.string().optional() }),
   skills: z.array(z.string()),
-  // Self-rated 1-5, used for "rate your X" questions.
+
   skillLevels: z.record(z.string(), z.number().min(1).max(5)).default({}),
   projects: z.array(z.object({ name: z.string(), summary: z.string(), skills: z.array(z.string()) })),
   availability: z.object({ hoursPerWeek: z.number(), startDate: z.string(), noticePeriod: z.string() }),
   preferences: z.object({
     expectedStipend: z.number(),
-    // null means "not decided". The operator asks instead of guessing.
+
     willingToRelocate: z.boolean().nullable(),
   }),
   resumePath: z.string(),

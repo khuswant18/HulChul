@@ -2,11 +2,6 @@ import { canonicalSkill, type Profile } from "./profile.ts";
 import type { TrackerRow } from "./tracker.ts";
 import type { JobListing, Mission, PlanItem, Rejection } from "./types.ts";
 
-// Deterministic shortlist. The job board already filtered the search, but its
-// filters are coarse (e.g. stipend compares against the top of the range),
-// so every constraint from the mission is checked again here, with a reason
-// recorded for every job that is dropped.
-
 const DAY = 86_400_000;
 const MIN_FIT = 0.34;
 

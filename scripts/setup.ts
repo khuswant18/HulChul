@@ -1,9 +1,3 @@
-// Prepares a clean demo: resets the sandbox, writes the synthetic resumes as
-// PDFs and creates each candidate's tracker spreadsheet.
-//
-//   npm run setup            reset sandbox + files
-//   npm run setup -- --runs  also delete old run folders
-
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
@@ -17,9 +11,7 @@ async function resetSandbox() {
   try {
     const res = await fetch(`${boardUrl}/__admin/reset`, { method: "POST" });
     if (res.ok) return "reset through the running sandbox";
-  } catch {
-    // Sandbox is not running; reset the state file directly.
-  }
+  } catch {}
   const { reset } = await import("../sandbox/store.ts");
   reset();
   return "state file reset (sandbox not running)";
@@ -82,7 +74,6 @@ async function main() {
     await writeResume(profile);
     loadProfile(file);
 
-    // Aarav already applied to one job by hand, and it is in his tracker.
     const rows =
       profile.email === "aarav.sharma@example.test"
         ? [

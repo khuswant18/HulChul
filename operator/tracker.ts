@@ -2,10 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import ExcelJS from "exceljs";
 
-// The candidate's own application tracker. The operator reads it before
-// applying (to skip jobs already applied to) and writes one row per
-// application, keyed by application ID so a rerun never adds a duplicate row.
-
 export interface TrackerRow {
   appliedOn: string;
   company: string;
@@ -68,7 +64,7 @@ export async function writeTracker(file: string, rows: TrackerRow[]) {
   sheet.getColumn("stipend").numFmt = "#,##0";
 
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  // Write to a temp file first so a crash never leaves a half-written tracker.
+
   const tmp = file + ".tmp.xlsx";
   await book.xlsx.writeFile(tmp);
   fs.renameSync(tmp, file);

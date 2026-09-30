@@ -12,10 +12,6 @@ const MAX_FORM_STEPS = 6;
 
 type Found = { applicationId: string; how: string } | null;
 
-// Looks for proof that an application exists, in a separate tab so the
-// form in the main tab is left alone. This is what makes a retry safe: the
-// operator only submits again when it has checked that the first attempt
-// did not go through.
 export async function findExistingApplication(ctx: RunContext, job: JobListing): Promise<Found | "unknown"> {
   const tab = await ctx.page.context().newPage();
   const driver = { ...ctx.driver, page: tab };
@@ -28,8 +24,6 @@ export async function findExistingApplication(ctx: RunContext, job: JobListing):
       return row ? { applicationId: row.applicationId, how: "found on Kaamkaaj › My applications" } : null;
     }
 
-    // External sites have no "my applications" page. The confirmation email
-    // is the only record, so check the inbox for one we don't already know.
     const mail = new Postbox(driver, ctx.urls.postbox, ctx.credentials);
     const known = new Set(Object.values(ctx.state.applications).map((a) => a.applicationId).filter(Boolean));
     const inbox = await mail.inbox();
@@ -119,15 +113,12 @@ export async function applyToJob(ctx: RunContext, job: JobListing) {
     const shot = await ctx.log(status === "skipped" ? "warn" : "error", `${where}: ${status}. ${reason}`, `${status} ${job.company}`);
     set({ status, reason, screenshot: shot });
   };
-  // The submit may or may not have landed and there is no way to check yet.
-  // The record stays "submitting" so resuming the run checks again first.
+
   const leaveUnresolved = async (reason: string) => {
     const shot = await ctx.log("error", `${where}: outcome unknown. ${reason}`, `unresolved ${job.company}`);
     set({ status: "submitting", reason, screenshot: shot });
   };
 
-  // An earlier attempt may have died between clicking submit and seeing the
-  // result. Settle that before touching the form again.
   if (record().status === "submitting") {
     await ctx.log("warn", `${where}: the last run stopped in the middle of submitting. Checking whether it went through.`);
     const found = await findExistingApplication(ctx, job);
@@ -138,7 +129,6 @@ export async function applyToJob(ctx: RunContext, job: JobListing) {
 
   set({ status: "applying", reason: null });
 
-  // Look at the posting again: it may have closed or been applied to since planning.
   const fresh = await ctx.board.readJob(job.url);
   if (fresh.state === "applied" && fresh.existingApplicationId) {
     return succeed(fresh.existingApplicationId, true, "the board already shows this application", ctx.page);
@@ -170,8 +160,6 @@ export async function applyToJob(ctx: RunContext, job: JobListing) {
     if (confirmation) return succeed(confirmation, false, "confirmation page", ctx.page);
     if (looksClosed(text)) return stopWith("blocked", "The site says the posting is no longer open.");
 
-    // Came back from a final submit without a confirmation (session loss,
-    // error page). Check before filling anything again.
     if (lastWasFinalSubmit) {
       const found = await findExistingApplication(ctx, job);
       if (found === "unknown") {
@@ -241,16 +229,12 @@ export async function applyToJob(ctx: RunContext, job: JobListing) {
       if (decision.value !== "submit") return stopWith("skipped", "You chose not to submit it.");
     }
 
-    // Written to disk before the click, so a crash right after the click is
-    // recognised on restart and checked instead of blindly repeated.
     if (final) set({ status: "submitting", submittedAt: new Date().toISOString() });
 
     await ctx.driver.checkpoint();
     const response = await clickSubmit(ctx.page);
 
     if (!response) {
-      // Abandon the hung request so the tab is usable again. The server may
-      // still have saved it, which is exactly what the next check finds out.
       await ctx.page.goto("about:blank").catch(() => null);
       await ctx.log("warn", `${where}: no response from the site after 12 seconds. It may or may not have saved it.`);
       lastWasFinalSubmit = final;
@@ -281,8 +265,7 @@ export async function applyToJob(ctx: RunContext, job: JobListing) {
     if (status === 422 || (errors.length && !readConfirmation(await visibleText(ctx.page)))) {
       return stopWith("blocked", `The form rejected the answers: ${errors.join(" ") || `HTTP ${status}`}`);
     }
-    // The top of the loop looks for a confirmation first; if there isn't one
-    // after a final submit, it checks the site before doing anything else.
+
     lastWasFinalSubmit = final;
   }
 

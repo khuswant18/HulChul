@@ -7,7 +7,6 @@ export function Timeline({ steps, onShowScreenshot }: { steps: Step[]; onShowScr
   const list = useRef<HTMLOListElement>(null);
   const pinned = useRef(true);
 
-  // Keep the newest step in view unless the user has scrolled up to read.
   useEffect(() => {
     const el = list.current;
     if (el && pinned.current) el.scrollTop = el.scrollHeight;

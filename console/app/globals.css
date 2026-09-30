@@ -62,7 +62,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .muted { color: var(--muted); }
 .small { font-size: 12.5px; }
 
-/* Frame */
 .topbar {
   display: flex; align-items: center; gap: 28px;
   height: 52px; padding: 0 24px;
@@ -82,7 +81,6 @@ h2 { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
 h3 { font-size: 13px; font-weight: 600; margin: 0 0 8px; color: var(--ink-2); }
 section + section { margin-top: 36px; }
 
-/* Controls */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   height: 34px; padding: 0 14px; white-space: nowrap;
@@ -118,7 +116,6 @@ input[type="number"] { width: 80px; }
 .error-text { color: var(--bad); font-size: 13px; }
 .notice { padding: 10px 12px; border-radius: var(--radius); background: var(--sunken); color: var(--ink-2); font-size: 13px; }
 
-/* Home */
 .home { display: grid; grid-template-columns: minmax(340px, 5fr) 7fr; gap: 48px; align-items: start; }
 .composer { display: grid; gap: 20px; }
 .composer .lead { color: var(--ink-2); margin: 6px 0 0; max-width: 46ch; }
@@ -132,7 +129,6 @@ fieldset.limits { border: 0; border-top: 1px solid var(--rule); margin: 0; paddi
 fieldset.limits legend { font-weight: 600; padding: 0; margin-bottom: 4px; float: left; width: 100%; }
 .row { display: flex; align-items: center; gap: 12px; }
 
-/* Tables */
 table.data { width: 100%; border-collapse: collapse; }
 table.data th { text-align: left; font-weight: 500; font-size: 12.5px; color: var(--muted); padding: 0 12px 8px 0; border-bottom: 1px solid var(--rule-strong); }
 table.data td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
@@ -154,7 +150,6 @@ table.data .goal-cell { max-width: 420px; }
 .sandbox { border-top: 1px solid var(--rule); padding-top: 20px; }
 .sandbox .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin: 12px 0 16px; }
 
-/* Run view */
 .run-head { display: grid; grid-template-columns: 1fr auto; gap: 16px 32px; align-items: start; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
 .run-head .back { font-size: 12.5px; color: var(--muted); text-decoration: none; }
 .run-head h1 { font-size: 19px; line-height: 1.35; margin-top: 6px; max-width: 70ch; font-weight: 500; }

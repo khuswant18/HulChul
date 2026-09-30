@@ -13,9 +13,6 @@ interface PendingApproval {
   reject: (err: Error) => void;
 }
 
-// Pause, stop and approvals. The operator calls checkpoint() before every
-// browser action, so a pause takes effect before the next click, not at the
-// end of the job.
 export class RunControl {
   private paused = false;
   private stopped = false;

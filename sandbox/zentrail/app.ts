@@ -4,9 +4,6 @@ import multer from "multer";
 import { db, deliverMail, findJob, nextId, save, uploadsDir } from "../store.ts";
 import { esc } from "../html.ts";
 
-// A company careers site with its own look and markup. The operator has no
-// special code for it: it has to read this form the same way it reads Kaamkaaj.
-
 const css = `
 body{margin:0;background:#101418;color:#e8eaed;font:15px/1.6 Georgia,"Times New Roman",serif}
 .wrap{max-width:640px;margin:0 auto;padding:48px 24px}
@@ -79,8 +76,6 @@ export function createZentrailApp() {
       return res.status(422).send(formPage(job.id, "Please complete every required field and attach your CV."));
     }
 
-    // No duplicate check here, on purpose. Plenty of careers sites accept the
-    // same person twice, which is why the operator has to be careful.
     const application = {
       applicationId: nextId("zentrail"),
       jobId: job.id,

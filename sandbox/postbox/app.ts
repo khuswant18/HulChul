@@ -4,8 +4,6 @@ import cookieParser from "cookie-parser";
 import { db, findUser, save } from "../store.ts";
 import { esc } from "../html.ts";
 
-// A bare-bones webmail client. The job board and Zentrail "send" email here.
-
 const css = `
 body{margin:0;font:14px/1.45 -apple-system,"Helvetica Neue",Arial,sans-serif;color:#222;background:#fafafa}
 .bar{background:#fff;border-bottom:1px solid #e3e3e3;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}

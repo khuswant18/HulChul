@@ -3,9 +3,6 @@
 import { useEffect, useState } from "react";
 import { api, type Faults } from "@/lib/api";
 
-// Test-bench controls for the demo: break the sandbox on purpose and watch
-// the operator recover. These talk to the sandbox, not to the operator.
-
 const DHOBI_EXPRESS = 1051;
 
 export function SandboxPanel({ compact = false }: { compact?: boolean }) {

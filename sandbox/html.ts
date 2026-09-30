@@ -1,5 +1,3 @@
-// Tiny helpers for server-rendered pages. No template engine needed for this size.
-
 export function esc(value: unknown): string {
   return String(value ?? "")
     .replace(/&/g, "&amp;")

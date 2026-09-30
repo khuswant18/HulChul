@@ -1,6 +1,3 @@
-// Synthetic data for the sandbox. Every company, person and job here is made up.
-// Dates are stored relative to "today" so the demo behaves the same on any day.
-
 export type QuestionKind = "text" | "number" | "date" | "url" | "textarea" | "select" | "yesno" | "checkbox";
 
 export interface Question {
@@ -27,7 +24,7 @@ export interface SeedJob {
   about: string;
   responsibilities: string[];
   questions: Question[];
-  // Some companies take applications on their own careers site.
+
   externalApply?: { company: "zentrail" };
 }
 
@@ -345,8 +342,6 @@ export const jobs: SeedJob[] = [
   },
 ];
 
-// Aarav applied to Nimbus Health by hand last week. It is in the board and in
-// his tracker spreadsheet, so the operator must not apply again.
 export const existingApplications = [
   { jobId: 1053, email: "aarav.sharma@example.test", applicationId: "KK-30207", daysAgo: 4 },
 ];

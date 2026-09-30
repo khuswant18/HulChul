@@ -3,11 +3,6 @@ import type { Llm } from "./llm.ts";
 import type { Profile } from "./profile.ts";
 import type { Mission } from "./types.ts";
 
-// Turns the user's sentence into a Mission: the concrete, checkable
-// constraints the rest of the operator works from. The model reads the goal
-// when it is available; the rules below handle the same goals without it and
-// also sanity-check whatever the model returns.
-
 export const BOARD_LOCATIONS = ["Remote", "Bengaluru", "Pune", "Mumbai", "Hyderabad", "Gurugram"];
 
 const MissionSchema = z.object({
@@ -56,7 +51,7 @@ export function parseGoalWithRules(goal: string, profile: Profile): ParsedGoal {
   const assumptions: string[] = [];
 
   const keywords = [...new Set(roleTerms.filter(([re]) => re.test(text)).map(([, kw]) => kw))];
-  // "react" on its own is redundant when a role like frontend is already there.
+
   const roleOnly = keywords.filter((k) => k !== "react" && k !== "node");
   const finalKeywords = roleOnly.length ? roleOnly : keywords;
   if (!finalKeywords.length) {
@@ -72,7 +67,7 @@ export function parseGoalWithRules(goal: string, profile: Profile): ParsedGoal {
     text.match(/\b(?:up to|at most|max(?:imum)?(?: of)?|best|top|only|apply to|apply for)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b/) ??
     text.match(/\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:applications|jobs|internships|roles|of them)\b/);
   if (count) maxApplications = toNumber(count[1]);
-  // "apply to the React Native internship" talks about exactly one job.
+
   else if (/\b(?:the|an?)\s+(?:[\w.-]+\s+){0,4}(?:internship|job|role|opening)\b(?!s)/.test(text)) maxApplications = 1;
 
   let minStipend: number | null = null;

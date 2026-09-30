@@ -5,13 +5,9 @@ import { MailboxUnavailable, Postbox, type InboxMail } from "./sites/postbox.ts"
 import { readTracker } from "./tracker.ts";
 import type { CheckResult, JobVerification, Verification } from "./types.ts";
 
-// Verification starts from nothing: a new browser session, the live board,
-// the live inbox and the tracker file on disk. It does not trust the run's
-// own memory of what happened, only what those three sources show now.
-
 export async function verifyRun(ctx: RunContext): Promise<Verification> {
   const { context, page } = await ctx.browser.newPage();
-  // Read-only work, so it ignores pause/stop and runs even after a stop.
+
   const driver = { page, checkpoint: async () => {}, log: ctx.driver.log };
   const evidence: Verification["evidence"] = [];
   const log = (level: Parameters<RunContext["log"]>[0], message: string, shot?: string) => ctx.log(level, message, shot, page);

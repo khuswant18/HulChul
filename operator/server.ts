@@ -1,6 +1,3 @@
-// HTTP API for the console: start runs, stream their state, pause/resume/stop,
-// answer approvals, and serve screenshots and reports from the runs folder.
-
 import "dotenv/config";
 import { execFile } from "node:child_process";
 import { EventEmitter } from "node:events";
@@ -29,8 +26,6 @@ function track(run: Run) {
   return run;
 }
 
-// A run that was mid-flight when this process last stopped can't still be
-// running. Mark it so the console offers to resume it.
 for (const state of Journal.list()) {
   if (["running", "paused", "waiting"].includes(state.status)) {
     const journal = new Journal(state);
@@ -115,7 +110,6 @@ app.get("/api/runs/:id/events", (req: Request, res: Response) => {
   const send = (state: RunState) => res.write(`data: ${JSON.stringify(state)}\n\n`);
   send(initial);
 
-  // Coalesce bursts of changes into at most ~5 messages a second.
   let pending: RunState | null = null;
   let timer: NodeJS.Timeout | null = null;
   const onState = (state: RunState) => {
@@ -166,7 +160,6 @@ app.post("/api/runs/:id/restart", (req, res) => {
   }
 });
 
-// Sandbox controls, proxied so the console only talks to one origin.
 app.get("/api/sandbox/faults", async (_req, res) => {
   try {
     res.json(await (await fetch(`${boardUrl}/__admin/faults`)).json());

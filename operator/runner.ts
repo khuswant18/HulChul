@@ -50,9 +50,6 @@ export function newRunState(goal: string, profilePath: string, profileName: stri
   };
 }
 
-// One run of the operator, from reading the goal to writing the report.
-// Every phase checks what the journal already has, so the same code path
-// both starts a run and resumes one that was interrupted.
 export class Run {
   readonly journal: Journal;
   readonly control: RunControl;
@@ -100,7 +97,7 @@ export class Run {
     const state = Journal.load(id);
     if (!state) throw new Error(`No run called ${id}`);
     if (state.status === "completed") throw new Error(`Run ${id} already met its goal`);
-    // Questions that were open when the process died are asked again.
+
     for (const a of state.approvals) if (!a.decision) a.decision = { value: "expired", at: new Date().toISOString() };
     Object.assign(state, { status: "running", error: null, outcome: null, finishedAt: null, resumedCount: state.resumedCount + 1 });
     const run = new Run(state, browserOptions);
@@ -332,15 +329,13 @@ export class Run {
         if (error instanceof StopRequested) throw error;
         const message = (error as Error).message.split("\n")[0];
         const shot = await ctx.log("error", `${item.company}: unexpected error, moving on. ${message}`, `error ${item.company}`);
-        // Only mark blocked if we never reached the submit click; a record
-        // left in "submitting" is checked again on the next resume.
+
         if (this.state.applications[key].status !== "submitting") {
           this.journal.update((s) => Object.assign(s.applications[key], { status: "blocked", reason: message, screenshot: shot }));
         }
       }
     }
 
-    // A crash between submitting and writing the tracker leaves rows to add.
     for (const rec of Object.values(this.state.applications)) {
       if (rec.status === "submitted" && !rec.loggedToTracker) await logToTracker(ctx, rec);
     }

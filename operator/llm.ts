@@ -1,11 +1,6 @@
 import Groq, { APIConnectionError, APIError, AuthenticationError, PermissionDeniedError, RateLimitError } from "groq-sdk";
 import { z } from "zod";
 
-// One narrow door to the model (Groq). Every call asks for JSON that must
-// match a zod schema. If the model is off, errors out, or returns something
-// that doesn't validate, the caller gets null and falls back to its rules.
-// The operator never needs the model to stay correct, only to be smarter.
-
 export type LlmNote = (message: string) => void;
 
 export class Llm {
@@ -19,7 +14,7 @@ export class Llm {
     const setting = (process.env.OPERATOR_LLM ?? "auto").toLowerCase();
     const hasKey = Boolean(process.env.GROQ_API_KEY);
     this.mode = (setting === "groq" || setting === "auto") && hasKey ? "groq" : "rules";
-    // gpt-oss models support strict JSON-schema output on Groq.
+
     this.model = process.env.OPERATOR_MODEL || "openai/gpt-oss-120b";
     if (this.mode === "groq") this.client = new Groq({ apiKey: process.env.GROQ_API_KEY, maxRetries: 2, timeout: 60_000 });
   }
@@ -35,8 +30,6 @@ export class Llm {
     if (!this.client) return null;
     this.calls += 1;
 
-    // Groq's strict mode wants every field required and no extra properties,
-    // which is what zod produces for these schemas. It rejects "$schema".
     const { $schema: _unused, ...jsonSchema } = z.toJSONSchema(schema) as Record<string, unknown>;
 
     try {
@@ -58,8 +51,7 @@ export class Llm {
       if (!choice || choice.finish_reason === "length" || !choice.message.content) {
         return this.fail(`${task.purpose}: model output was incomplete, using rules instead`);
       }
-      // Strict mode should guarantee the shape, but it is checked again here
-      // so nothing unvalidated ever reaches a form.
+
       const parsed = schema.safeParse(JSON.parse(choice.message.content));
       if (!parsed.success) {
         return this.fail(`${task.purpose}: model output didn't match the expected shape, using rules instead`);
@@ -67,7 +59,6 @@ export class Llm {
       return parsed.data;
     } catch (error) {
       if (error instanceof AuthenticationError || error instanceof PermissionDeniedError) {
-        // Retrying won't fix a bad key, so stop calling the API for this run.
         this.client = null;
         return this.fail(`${task.purpose}: Groq API key rejected. Using rules for the rest of this run`);
       }

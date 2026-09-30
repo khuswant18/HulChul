@@ -61,8 +61,7 @@ export function RunView({ id }: { id: string }) {
   const submitted = Object.values(state.applications).filter((a) => a.status === "submitted").length;
   const currentPhase = phases.findIndex((p) => p.key === state.phase);
   const finished = !live(state.status);
-  // Worth resuming only if something is unfinished: an interrupted run, or a
-  // submit whose outcome couldn't be checked, or planned jobs never tried.
+
   const unresolved = Object.values(state.applications).some((a) => a.status === "submitting");
   const untried = state.plan.some((p) => !state.applications[String(p.boardId)]) && submitted < state.target;
   const resumable =
@@ -176,7 +175,6 @@ export function RunView({ id }: { id: string }) {
             <div className="screen">
               {shownShot ? (
                 <a href={fileUrl(id, shownShot)} target="_blank" rel="noreferrer">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={fileUrl(id, shownShot)} alt="Operator browser" />
                 </a>
               ) : (

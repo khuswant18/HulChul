@@ -49,7 +49,7 @@ export function createKaamkaajApp(options: { password: string; zentrailUrl: stri
         delete db().sessions[token];
         save();
         res.clearCookie(COOKIE);
-        // Like most real sites, a POST that arrives after expiry is simply lost.
+
         return res.redirect(loginUrl(true));
       }
       save();
@@ -132,7 +132,6 @@ export function createKaamkaajApp(options: { password: string; zentrailUrl: stri
     );
   });
 
-  // Guards shared by both application steps.
   function applyGuard(req: Request, res: Response) {
     const { user } = req as SignedIn;
     const job = loadJob(req, res);
@@ -249,8 +248,6 @@ export function createKaamkaajApp(options: { password: string; zentrailUrl: stri
     save();
     if (hang) await new Promise((r) => setTimeout(r, 30_000));
 
-    // The application is saved either way. With the fault on, the browser
-    // only sees a gateway error, which is the ambiguous case worth testing.
     if (glitch) return res.status(502).send(views.badGateway);
     res.send(views.submittedPage(user, job, application));
   });

@@ -3,10 +3,6 @@ import type { Llm } from "./llm.ts";
 import { canonicalSkill, type Profile } from "./profile.ts";
 import type { JobListing } from "./types.ts";
 
-// Free-text answers (cover notes, "why us", "describe a project").
-// The model writes them when available, grounded in the profile. The template
-// version is plainer but never says anything that isn't in the profile.
-
 const AnswerSchema = z.object({ answer: z.string() });
 
 function bestProject(profile: Profile, job: JobListing) {
@@ -67,7 +63,7 @@ export async function writeAnswer(question: string, profile: Profile, job: JobLi
   });
 
   const answer = result?.answer.trim();
-  // Guard against output that would embarrass the candidate if sent.
+
   if (!answer || answer.length < 40 || answer.length > 1200 || /\[.*?\]|\{.*?\}|lorem/i.test(answer)) {
     return { text: fallback, source: "written from profile (template)" };
   }

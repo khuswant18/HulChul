@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { api, type TrackerRow } from "@/lib/api";
 
-// The candidate's tracker spreadsheet as it is on disk right now.
 export function TrackerView({ profilePath, refreshKey }: { profilePath: string; refreshKey: number }) {
   const [data, setData] = useState<{ path: string; rows: TrackerRow[] } | null>(null);
   const [error, setError] = useState<string | null>(null);

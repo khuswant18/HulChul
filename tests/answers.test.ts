@@ -28,7 +28,7 @@ test("a bond that mentions money is a contract term, not a fee", () => {
   const f = field("I accept a 12-month service agreement with a ₹50,000 early-exit clause.", "checkbox");
   const result = safetyCheck(f, defaultAuthority);
   assert.equal(result?.action === "ask" && result.kind, "commitment");
-  // Allowing fees must not unlock a contract term.
+
   assert.equal(safetyCheck(f, { ...defaultAuthority, allowFees: true })?.action, "ask");
 });
 

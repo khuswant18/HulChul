@@ -13,7 +13,6 @@ if (process.argv.includes("--reset")) reset();
 
 const kaamkaaj = createKaamkaajApp({ password, zentrailUrl });
 
-// Admin endpoints for the demo: inspect state, reset it, and switch faults on.
 const admin = express.Router();
 admin.use(express.json());
 admin.get("/faults", (_req, res) => res.json(db().faults));
@@ -21,7 +20,7 @@ admin.post("/faults", (req, res) => {
   const patch = req.body as Partial<Faults>;
   const faults = { ...db().faults, ...patch };
   db().faults = faults;
-  // Session expiry is one-shot: it arms the sessions that exist right now.
+
   if (patch.expireSessionAfter) {
     for (const session of Object.values(db().sessions)) session.requestsLeft = patch.expireSessionAfter;
     faults.expireSessionAfter = 0;

@@ -2,10 +2,6 @@ import path from "node:path";
 import type { Page } from "playwright";
 import type { FieldPlan, FormField } from "./answers.ts";
 
-// Reads whatever form is on the page into a neutral list of fields, the way a
-// person would: by the visible label, falling back to aria-label, placeholder
-// or the surrounding fieldset legend. Nothing here knows which site it is on.
-
 export async function readForm(page: Page): Promise<{ fields: FormField[]; submitLabel: string } | null> {
   return page.evaluate(() => {
     const clean = (text: string | null | undefined) =>
@@ -15,7 +11,7 @@ export async function readForm(page: Page): Promise<{ fields: FormField[]; submi
       (f) => f.getAttribute("role") !== "search" && f.querySelector("input:not([type=hidden]), textarea, select"),
     );
     if (!forms.length) return null;
-    // The application form is the one with the most fields.
+
     const form = forms.sort((a, b) => b.elements.length - a.elements.length)[0];
 
     const labelFor = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
@@ -95,10 +91,8 @@ export async function fillField(page: Page, plan: Extract<FieldPlan, { action: "
   }
 }
 
-// A final submit is anything that doesn't read like "go to the next step".
 export const isFinalStep = (submitLabel: string) => !/\b(next|continue|save and|proceed)\b/i.test(submitLabel);
 
-// Returns null when the site didn't answer within 12 seconds.
 export async function clickSubmit(page: Page) {
   const form = page.locator("form:not([role=search])").filter({ has: page.locator("input:not([type=hidden]), textarea, select") });
   const button = form.last().locator("button[type=submit], button:not([type]), input[type=submit]").last();
@@ -114,8 +108,6 @@ export async function pageErrors(page: Page) {
   return [...new Set(texts.map((t) => t.trim()).filter(Boolean))];
 }
 
-// Outlines the field the operator is asking about, so the screenshot that
-// goes with the approval request shows exactly what it stopped on.
 export async function highlightField(page: Page, fieldName: string) {
   await page
     .locator(`form [name="${fieldName}"]`)

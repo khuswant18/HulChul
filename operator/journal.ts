@@ -5,9 +5,6 @@ import type { Phase, RunState, Step, StepLevel } from "./types.ts";
 
 export const RUNS_DIR = path.resolve("runs");
 
-// The run's state lives on disk and is rewritten after every change, with
-// each step also appended to steps.jsonl. If the process dies, the next start
-// reads state.json and carries on from there.
 export class Journal extends EventEmitter {
   readonly dir: string;
   readonly shotsDir: string;

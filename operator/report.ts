@@ -2,9 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import type { CheckResult, RunState } from "./types.ts";
 
-// A single HTML file per run that someone can open without the console:
-// what was asked, what was done, what was proven and what is still missing.
-
 const esc = (v: unknown) =>
   String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 

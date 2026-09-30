@@ -9,8 +9,6 @@ export interface InboxMail {
 
 export class MailboxUnavailable extends Error {}
 
-// The candidate's webmail. Used to confirm that employers actually received
-// an application, which is the only proof available for external sites.
 export class Postbox {
   constructor(
     private d: Driver,

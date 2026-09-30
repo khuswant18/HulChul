@@ -1,11 +1,6 @@
 import type { JobListing } from "../types.ts";
 import { visibleText, type Driver } from "./driver.ts";
 
-// Navigation on the Kaamkaaj job board: logging in, searching, reading
-// postings and the My applications page. Application forms are not handled
-// here; they go through the generic form reader because every employer's
-// form is different.
-
 export interface SearchFilters {
   q: string;
   location: string;
@@ -47,8 +42,6 @@ export class Kaamkaaj {
     await this.recoverSession();
   }
 
-  // If the site bounced us to the login page, sign in again. The board sends
-  // us back to the page we were trying to reach.
   async recoverSession() {
     if (!this.isLoginPage()) return false;
     const expired = (await visibleText(this.page)).includes("session has expired");
@@ -77,9 +70,6 @@ export class Kaamkaaj {
     await form.getByLabel("Keywords").fill(filters.q);
     await form.getByLabel("Location").selectOption(filters.location);
 
-    // The board only offers fixed steps, so pick the closest step that
-    // doesn't hide anything the mission would accept. Exact values are
-    // re-checked later when the shortlist is built.
     const stipendStep = filters.minStipend ? [...STIPEND_OPTIONS].reverse().find((s) => s <= filters.minStipend!) : undefined;
     await form.getByLabel("Minimum stipend").selectOption(stipendStep ? String(stipendStep) : "");
     const postedStep = filters.postedWithinDays ? POSTED_OPTIONS.find((d) => d >= filters.postedWithinDays!) : undefined;

@@ -1,12 +1,3 @@
-// Terminal front end for the operator.
-//
-//   npm run operator -- "Apply to 3 remote frontend internships paying 15k+" --profile workspace/profiles/aarav-sharma.json
-//   npm run operator -- --resume <run-id>
-//   npm run operator -- --list
-//
-// While it runs: type p + Enter to pause, r to resume, s to stop.
-// Ctrl+C once stops cleanly (verifies and writes the report); twice exits at once.
-
 import "dotenv/config";
 import readline from "node:readline";
 import { parseArgs } from "node:util";
@@ -33,7 +24,6 @@ const { values, positionals } = parseArgs({
 const colour = { info: "\x1b[0m", action: "\x1b[36m", warn: "\x1b[33m", error: "\x1b[31m", success: "\x1b[32m" };
 const reset = "\x1b[0m";
 
-// With --auto nobody is at the keyboard, so every question gets the cautious answer.
 function autoAnswer(a: Approval) {
   const preferred = { plan: "approve", limit: "keep", submit: "submit", fee: "skip", commitment: "skip", input: "skip" }[a.kind];
   return a.options.find((o) => o.value === preferred) ?? a.options[0];
@@ -70,7 +60,7 @@ function main() {
   console.log("Type p to pause, r to resume, s to stop.\n");
 
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  // On a resume, earlier steps are already in the report; only print new ones.
+
   let printed = values.resume ? run.state.steps.length : 0;
   let asked: string | null = null;
 
