@@ -39,7 +39,7 @@ export function constraintProblem(job: JobListing, mission: Mission, now = Date.
   return null;
 }
 
-export function shortlist(jobs: JobListing[], mission: Mission, profile: Profile, tracker: TrackerRow[]) {
+export function shortlist(jobs: JobListing[], mission: Mission, profile: Profile, tracker: TrackerRow[], now = Date.now()) {
   const ranked: PlanItem[] = [];
   const rejected: Rejection[] = [];
   const mine = new Set(profile.skills.map(canonicalSkill));
@@ -56,7 +56,7 @@ export function shortlist(jobs: JobListing[], mission: Mission, profile: Profile
       reject(`Already applied (${applied})`);
       continue;
     }
-    const problem = constraintProblem(job, mission);
+    const problem = constraintProblem(job, mission, now);
     if (problem) {
       reject(problem);
       continue;
@@ -70,10 +70,11 @@ export function shortlist(jobs: JobListing[], mission: Mission, profile: Profile
       continue;
     }
 
+    const age = daysSince(job.postedOn, now);
     const reasons = [
       matched.length ? `Matches ${matched.join(", ")}` : "No listed skills matched",
       `${inr(job.stipendMax)}/month`,
-      `Posted ${daysSince(job.postedOn) === 0 ? "today" : `${daysSince(job.postedOn)}d ago`}`,
+      `Posted ${age === 0 ? "today" : `${age}d ago`}`,
     ];
     if (job.channel === "external") reasons.push("Applies on company site");
 

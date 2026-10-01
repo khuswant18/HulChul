@@ -45,3 +45,28 @@ test("ranks by skill fit, then stipend", () => {
   );
   assert.deepEqual(ranked.map((r) => r.boardId), [3, 2, 1]);
 });
+
+test("rejects excluded companies and passed deadlines", () => {
+  const { ranked, rejected } = shortlist(
+    [
+      job({ boardId: 1, company: "Chaiwala Labs" }),
+      job({ boardId: 2, deadline: new Date(Date.now() - DAY).toISOString() }),
+    ],
+    { ...mission, excludeCompanies: ["chaiwala labs"] },
+    profile,
+    [],
+  );
+  assert.equal(ranked.length, 0);
+  const reasons = Object.fromEntries(rejected.map((r) => [r.boardId, r.reason]));
+  assert.match(reasons[1], /Chaiwala Labs is excluded/);
+  assert.match(reasons[2], /deadline has passed/);
+});
+
+test("judges recency against the given time", () => {
+  const listing = job({ postedOn: "2026-09-20T10:00:00.000Z", deadline: "2026-12-31T00:00:00.000Z" });
+  const early = shortlist([listing], mission, profile, [], Date.parse("2026-09-22T10:00:00.000Z"));
+  assert.equal(early.ranked.length, 1);
+  assert.ok(early.ranked[0].reasons.includes("Posted 2d ago"));
+  const late = shortlist([listing], mission, profile, [], Date.parse("2026-10-01T10:00:00.000Z"));
+  assert.match(late.rejected[0].reason, /Posted 11 days ago/);
+});
