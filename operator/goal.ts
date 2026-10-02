@@ -85,10 +85,12 @@ export function parseGoalWithRules(goal: string, profile: Profile): ParsedGoal {
 
   let postedWithinDays: number | null = null;
   const days = text.match(/\b(?:last|past)\s+(\d+|one|two|three|four|five|six|seven|ten|fourteen|thirty)\s+days?\b/);
+  const weeks = text.match(/\b(?:last|past)\s+(\d+|one|two|three|four)\s+weeks?\b/);
   if (days) postedWithinDays = toNumber(days[1]) || { fourteen: 14, thirty: 30 }[days[1]] || null;
+  else if (weeks) postedWithinDays = toNumber(weeks[1]) * 7 || null;
   else if (/\b(last|past|this) week\b/.test(text)) postedWithinDays = 7;
   else if (/\btoday\b|\blast 24 hours\b/.test(text)) postedWithinDays = 1;
-  else if (/\b(last|past) (two weeks|fortnight)\b/.test(text)) postedWithinDays = 14;
+  else if (/\b(last|past) fortnight\b/.test(text)) postedWithinDays = 14;
   else if (/\b(this|last|past) month\b/.test(text)) postedWithinDays = 30;
 
   const excludeCompanies: string[] = [];

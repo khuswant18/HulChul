@@ -45,3 +45,9 @@ test("falls back to profile skills when no role is named, and says so", () => {
   assert.deepEqual(m.keywords, ["react", "typescript"]);
   assert.equal(m.assumptions.length, 1);
 });
+
+test("reads recency given in weeks", () => {
+  assert.equal(parseGoalWithRules("Apply to 2 frontend internships from the last 2 weeks", profile).postedWithinDays, 14);
+  assert.equal(parseGoalWithRules("Apply to 2 frontend internships posted in the past three weeks", profile).postedWithinDays, 21);
+  assert.equal(parseGoalWithRules("Apply to 2 frontend internships posted in the last week", profile).postedWithinDays, 7);
+});
