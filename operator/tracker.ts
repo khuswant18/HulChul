@@ -73,7 +73,7 @@ export async function writeTracker(file: string, rows: TrackerRow[]) {
 export async function upsertTrackerRow(file: string, row: TrackerRow) {
   const rows = await readTracker(file);
   const index = rows.findIndex(
-    (r) => (row.applicationId && r.applicationId === row.applicationId) || r.jobUrl === row.jobUrl,
+    (r) => (row.applicationId && r.applicationId === row.applicationId) || (row.jobUrl && r.jobUrl === row.jobUrl),
   );
   if (index >= 0) rows[index] = { ...rows[index], ...row };
   else rows.push(row);

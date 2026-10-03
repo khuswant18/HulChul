@@ -33,3 +33,11 @@ test("writing the same application twice leaves one row", async () => {
 test("a missing tracker reads as empty", async () => {
   assert.deepEqual(await readTracker("/nonexistent/tracker.xlsx"), []);
 });
+
+test("rows without a job URL are kept apart by application ID", async () => {
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "tracker-")), "t.xlsx");
+  assert.equal(await upsertTrackerRow(file, { ...row("1"), jobUrl: "" }), "added");
+  assert.equal(await upsertTrackerRow(file, { ...row("2"), jobUrl: "" }), "added");
+  const rows = await readTracker(file);
+  assert.deepEqual(rows.map((r) => r.applicationId), ["KK-1", "KK-2"]);
+});
